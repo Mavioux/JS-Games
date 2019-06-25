@@ -16,7 +16,7 @@ class Player {
     constructor() {
         this.width = canvas.width * playerWidth / canvasWidth;
         this.height = canvas.height * playerHeight / canvasHeight;
-        this.x = canvas.width * 50 / canvasWidth;
+        this.x = canvas.width * 200 / canvasWidth;
         this.y = canvas.height * (canvas.height - this.height) / canvasHeight;
         this.speed = canvas.height * 2 / canvasHeight;
     }
@@ -39,6 +39,7 @@ let paused = true;
 let fps = 60;
 let player;
 let obstacle;
+let scoreFontSize 
 
 //Call for our function to execute when the page loads
 document.addEventListener('DOMContentLoaded', setupCanvas);
@@ -55,6 +56,9 @@ function setupCanvas() {
     //Code I found to fix scaling in smaller devices
     ctx.canvas.width  = window.innerWidth * canvasWidth / 1920;
     ctx.canvas.height = window.innerHeight * canvasHeight / 1080;
+
+    //Set Score Font size
+    scoreFontSize = canvas.width / canvas.height * 30;
 
     player = new Player();
 
@@ -81,15 +85,20 @@ function draw() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     //Draw the player Rectangle
-    ctx.fillstyle = 'white';  //purple
-    ctx.fillRect = (300, 300 , player.width, player.height);
+    ctx.fillStyle = 'white';  //purple
+    ctx.fillRect(player.x, player.y, player.width, player.height);
     
     //Draw the obstacle Rectangle if there is one
     if (obstacle != null) {
-        ctx.fillstyle = '#ffff00';  //purple
-        ctx.fillRect = (obstacle.x, obstacle.y , obstacle.width, obstacle.height);
+        ctx.fillStyle = '#ffff00';  //yellow
+        ctx.fillRect(obstacle.x, obstacle.y , obstacle.width, obstacle.height);
     }
 
+    //Draw the score
+    ctx.fillStyle = 'white';
+    ctx.font = scoreFontSize + "px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(score, canvas.width / 2, canvas.width * 25 / canvasHeight);
     
 }
 
