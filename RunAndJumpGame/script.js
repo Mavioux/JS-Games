@@ -1,7 +1,7 @@
 let canvasWidth = 1600
 let canvasHeight = 900
-let playerWidth = 50
-let playerHeight = 200
+let playerWidth = 125
+let playerHeight = 125
 let obstacleWidth = 50
 let obstacleHeight = 50
 let playerLevelY;
@@ -25,12 +25,22 @@ class Player {
 }
 
 class Obstacle {
-    constructor(speed, height) {
+    constructor(speed, height, x) {
         this.width = ctx.canvas.width * obstacleWidth / canvasWidth;
         this.height = ctx.canvas.height * obstacleHeight / canvasHeight;
-        this.x = ctx.canvas.width;
+        this.x = ctx.canvas.width + x;
         this.y = ctx.canvas.height * height / canvasHeight;
-        this.speed = ctx.canvas.width * 5 / canvasWidth;
+        this.speed = ctx.canvas.width * speed / canvasWidth;
+    }
+}
+
+class Cloud {
+    constructor (x) {
+        this.width = ctx.canvas.width * 300 / canvasWidth;
+        this.height = ctx.canvas.height * 50 / canvasHeight;
+        this.x = ctx.canvas.width - x;
+        this.y = ctx.canvas.height * 100 / canvasHeight;
+        this.speed = ctx.canvas.width * 10 / canvasWidth;
     }
 }
 
@@ -45,6 +55,9 @@ let scoreFontSize;
 let jumping = false;
 let falling = false;
 let playing = false;
+let obstacleBoolean = false;
+let clouds;
+
 
 //Call for our function to execute when the page loads
 document.addEventListener('DOMContentLoaded', setupCanvas);
@@ -66,6 +79,9 @@ function setupCanvas() {
     scoreFontSize = canvas.width / canvas.height * 20;
 
     player = new Player();
+
+    //Initialize the clouds
+    clouds = new Array(new Cloud(0), new Cloud(300), new Cloud(600));
 
     //Handle Player Input
     document.addEventListener('keydown', playerJump);
@@ -90,7 +106,7 @@ function draw() {
     ctx.fillRect(player.x, player.y, player.width, player.height);
     
     //Draw the obstacle Rectangle if there is one
-    if (obstacle != null) {
+    if(obstacleBoolean) {
         ctx.fillStyle = '#ffff00';  //yellow
         ctx.fillRect(obstacle.x, obstacle.y , obstacle.width, obstacle.height);
     }
@@ -100,21 +116,13 @@ function draw() {
     ctx.font = scoreFontSize + "px Arial";
     ctx.textAlign = "center";
     ctx.fillText(score, ctx.canvas.width / 2, ctx.canvas.width * 40 / canvasHeight);
+
+    //Draw the Clouds
+    ctx.fillStyle = 'grey';
+    for(let i = 0; i < 3; i++) {
+        ctx.fillRect(clouds[i].x, clouds[i].y, clouds[i].width, clouds[i].height);
+    }
     
-}
-
-//PlayerJump Function
-function playerJump (key) {
-
-    if(playing === false) {
-        playing = true;
-        window.requestAnimationFrame(gameloop);
-    }
-
-    if(key.keyCode === 32 && falling === false && jumping === false) {
-        jumping = true
-        // alert('i pressed space');
-    }
 }
 
 //Update Function
@@ -141,6 +149,53 @@ function update() {
         }
     }
 
+    if(!obstacleBoolean) {
+        let speed = ctx.canvas.width / canvasWidth * (50 + Math.random() * 20);
+        let height = ctx.canvas.width - ctx.canvas.height / canvasHeight * (0 + Math.random() * 150);
+        let x = ctx.canvas.width / canvasWidth * (Math.random() * 100);
+        console.log(speed);
+        console.log(height);
+        obstacle = new Obstacle(speed, height, x);
+        obstacleBoolean = true;
+    }
+
+    if(obstacleBoolean) {
+        obstacle.x -= obstacle.speed;
+        if(obstacle.x < 0) {
+            obstacleBoolean = false;
+        }
+    }
+
+    //Update the Clouds
+    for(let i = 0; i < 3; i++) {
+        clouds[i].x -= clouds[i].speed;
+        if(clouds[i].x < -clouds[i].width) {
+            clouds[i] = new Cloud(0);
+        }
+    }
+
+    
+
+    //Up the score!
+    score++;
+
+    //Collision Detection
+
+}
+
+
+//PlayerJump Function
+function playerJump (key) {
+
+    if(playing === false && key.keyCode === 32) {
+        playing = true;
+        window.requestAnimationFrame(gameloop);
+    }
+
+    if(key.keyCode === 32 && falling === false && jumping === false) {
+        jumping = true
+        // alert('i pressed space');
+    }
 }
 
 //Start Function
