@@ -1,5 +1,5 @@
-let canvasWidth = 1600
-let canvasHeight = 900
+let canvasWidth = 1366
+let canvasHeight = 768
 let playerWidth = 125
 let playerHeight = 125
 let obstacleWidth = 50
@@ -72,8 +72,8 @@ function setupCanvas() {
     ctx = canvas.getContext('2d');
 
     //Code I found to fix scaling in smaller devices
-    ctx.canvas.width  = window.innerWidth * canvasWidth / 1920;
-    ctx.canvas.height = window.innerHeight * canvasHeight / 1080;
+    ctx.canvas.width  = canvasWidth;
+    ctx.canvas.height = canvasHeight;
 
     //Set Score Font size
     scoreFontSize = canvas.width / canvas.height * 20;
