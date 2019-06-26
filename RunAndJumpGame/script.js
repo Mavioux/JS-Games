@@ -46,7 +46,6 @@ class Cloud {
 
 let score = 0;
 let gameover = false;
-// let start = true;
 let paused = false;
 let fps = 60;
 let player;
@@ -85,7 +84,7 @@ function setupCanvas() {
 
     //Handle Player Input
     document.addEventListener('keydown', playerJump);
-    // document.addEventListener('keydown', startF);
+    document.addEventListener('keydown', startF);
 
     console.log("CanvasWidth " + ctx.canvas.width);
     console.log("CanvasHeight " + ctx.canvas.height);
@@ -130,9 +129,13 @@ function draw() {
         ctx.fillRect(clouds[i].x, clouds[i].y, clouds[i].width, clouds[i].height);
     }
 
-    //Test paint
-    ctx.fillStyle = 'white';
-    ctx.fillRect(ctx.canvas.width - 100, ctx.height - 100, 30, 30);
+    //Pause Menu
+    if (paused) {
+        ctx.fillStyle = 'white';
+        ctx.font = 50 + "px Arial";
+        ctx.fillText("Paused", canvasWidth/2, canvasHeight/2);
+        alert('hi');
+    }
     
 }
 
@@ -141,8 +144,7 @@ function update() {
 
     //if jump was pressed move the player model up in the air, until it reaches maximum height
     if(jumping) {
-        // alert('hi');
-        if(player.y > playerLevelY - ctx.canvas.height / canvasHeight * 500) {
+        if(player.y > playerLevelY - ctx.canvas.height / canvasHeight * 300) {
             player.y -= 30;
         }
         else {
@@ -152,7 +154,7 @@ function update() {
     }
     else if (falling) {
         if(player.y < playerLevelY) {
-            player.y += 20;
+            player.y += 10;
         }
         else {
             player.y = (ctx.canvas.height - player.height);
@@ -163,7 +165,7 @@ function update() {
 
     if(!obstacleBoolean) {
         let speed = ctx.canvas.width / canvasWidth * (20 + Math.random() * 10);
-        let y = ctx.canvas.height - ctx.canvas.height / canvasHeight * (0 + Math.random() * 150);
+        let y = canvasHeight - (obstacleHeight + Math.random() * 300);
         let x = ctx.canvas.width / canvasWidth * (Math.random() * 100);
         console.log("Ball Speed " + speed);
         console.log("Ball y " + y);
@@ -193,6 +195,13 @@ function update() {
     score++;
 
     //Collision Detection
+    if(obstacleBoolean){
+        if(player.x + playerWidth > obstacle.x && obstacle.x + obstacleWidth > player.x) {
+            if(player.y < obstacle.y + obstacleHeight && obstacle.y < player.y + playerHeight) {
+                gameover = true;
+            }
+        }
+    }
 
 }
 
@@ -200,24 +209,35 @@ function update() {
 //PlayerJump Function
 function playerJump (key) {
 
-    if(playing === false && key.keyCode === 32) {
+    if(key.keyCode === 32 && falling === false && jumping === false && playing && paused) {
+        jumping = false;
+        paused = false;
+    }
+    else if(key.keyCode === 32 && falling === false && jumping === false && playing) {
+        jumping = true
+        paused = false;
+    }
+    else if(key.keyCode === 32 && playing && paused) {
+        paused = false;
+    }
+
+    if(key.keyCode === 27 && playing) {
+        paused = true;
+    }
+
+    if(key.keyCode === 32 && playing && paused) {
+        paused = false;
+    }
+
+}
+
+// Start Function
+function startF(key) {
+    if(key.keyCode === 32 && playing === false) {
         playing = true;
         window.requestAnimationFrame(gameloop);
     }
-
-    if(key.keyCode === 32 && falling === false && jumping === false) {
-        jumping = true
-        // alert('i pressed space');
-    }
 }
-
-//Start Function
-// function startF(key) {
-//     if(key.keyCode === 32 && start === true) {
-//         start = false;
-//         window.requestAnimationFrame(gameloop);
-//     }
-// }
 
 //Gameloop
 function gameloop() {
@@ -228,5 +248,11 @@ function gameloop() {
 
     if(!gameover) {
         requestAnimationFrame(gameloop);
+    }
+    else {
+        ctx.fillStyle = 'white';
+        ctx.font = scoreFontSize + "px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("Game Over!", ctx.canvas.width / 2, ctx.canvas.width / 2);
     }
 }
