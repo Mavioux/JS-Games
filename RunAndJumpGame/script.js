@@ -25,11 +25,11 @@ class Player {
 }
 
 class Obstacle {
-    constructor(speed, height, x) {
+    constructor(speed, y, x) {
         this.width = ctx.canvas.width * obstacleWidth / canvasWidth;
         this.height = ctx.canvas.height * obstacleHeight / canvasHeight;
         this.x = ctx.canvas.width + x;
-        this.y = ctx.canvas.height * height / canvasHeight;
+        this.y = ctx.canvas.height * y / canvasHeight;
         this.speed = ctx.canvas.width * speed / canvasWidth;
     }
 }
@@ -38,7 +38,7 @@ class Cloud {
     constructor (x) {
         this.width = ctx.canvas.width * 300 / canvasWidth;
         this.height = ctx.canvas.height * 50 / canvasHeight;
-        this.x = ctx.canvas.width - x;
+        this.x = ctx.canvas.width + ctx.canvas.width / canvasWidth * x;
         this.y = ctx.canvas.height * 100 / canvasHeight;
         this.speed = ctx.canvas.width * 10 / canvasWidth;
     }
@@ -81,14 +81,19 @@ function setupCanvas() {
     player = new Player();
 
     //Initialize the clouds
-    clouds = new Array(new Cloud(0), new Cloud(300), new Cloud(600));
+    clouds = new Array(new Cloud(0), new Cloud(650), new Cloud(1250));
 
     //Handle Player Input
     document.addEventListener('keydown', playerJump);
     // document.addEventListener('keydown', startF);
 
+    console.log("CanvasWidth " + ctx.canvas.width);
+    console.log("CanvasHeight " + ctx.canvas.height);
+
     //Draw the elements for the first time
     draw();
+
+   
 }
 
 //Draw function
@@ -102,8 +107,10 @@ function draw() {
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     
     //Draw the player Rectangle
-    ctx.fillStyle = 'white';  //purple
+    ctx.fillStyle = 'purple';  //purple
     ctx.fillRect(player.x, player.y, player.width, player.height);
+    // console.log("player.x " + player.x);
+    // console.log("player.y " + player.y);
     
     //Draw the obstacle Rectangle if there is one
     if(obstacleBoolean) {
@@ -122,6 +129,10 @@ function draw() {
     for(let i = 0; i < 3; i++) {
         ctx.fillRect(clouds[i].x, clouds[i].y, clouds[i].width, clouds[i].height);
     }
+
+    //Test paint
+    ctx.fillStyle = 'white';
+    ctx.fillRect(ctx.canvas.width - 100, ctx.height - 100, 30, 30);
     
 }
 
@@ -144,18 +155,20 @@ function update() {
             player.y += 20;
         }
         else {
+            player.y = (ctx.canvas.height - player.height);
             jumping = false;
             falling = false;
         }
     }
 
     if(!obstacleBoolean) {
-        let speed = ctx.canvas.width / canvasWidth * (50 + Math.random() * 20);
-        let height = ctx.canvas.width - ctx.canvas.height / canvasHeight * (0 + Math.random() * 150);
+        let speed = ctx.canvas.width / canvasWidth * (20 + Math.random() * 10);
+        let y = ctx.canvas.height - ctx.canvas.height / canvasHeight * (0 + Math.random() * 150);
         let x = ctx.canvas.width / canvasWidth * (Math.random() * 100);
-        console.log(speed);
-        console.log(height);
-        obstacle = new Obstacle(speed, height, x);
+        console.log("Ball Speed " + speed);
+        console.log("Ball y " + y);
+        console.log(ctx.canvas.width);
+        obstacle = new Obstacle(speed, y, x);
         obstacleBoolean = true;
     }
 
