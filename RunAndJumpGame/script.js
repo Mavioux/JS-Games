@@ -128,6 +128,14 @@ function draw() {
     for(let i = 0; i < 3; i++) {
         ctx.fillRect(clouds[i].x, clouds[i].y, clouds[i].width, clouds[i].height);
     }
+
+    //Press Space to Play Message
+    if(!playing) {
+        ctx.fillStyle = 'white';
+        ctx.font = 50 + "px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("Press Space to play!", canvasWidth / 2, canvasHeight / 2);
+    }
     
 }
 
@@ -194,7 +202,6 @@ function update() {
             }
         }
     }
-
 }
 
 
@@ -225,9 +232,16 @@ function playerJump (key) {
 
 // Start Function
 function startF(key) {
-    if(key.keyCode === 32 && playing === false) {
+    if(key.keyCode === 32 && playing === false && !gameover) {
+        console.log('trying to start a new game');
         playing = true;
+        gameover = false;
         window.requestAnimationFrame(gameloop);
+    }
+
+    if(key.keyCode === 32 && playing === false && gameover) {
+        console.log('Start new game');
+        restart();
     }
 }
 
@@ -246,6 +260,24 @@ if (paused) {
     alert('hi');
 }
 
+//Restart Game
+function restart() {
+    score = 0;
+    gameover = false;
+    paused = false;
+    fps = 60;
+    player;
+    obstacle;
+    scoreFontSize;
+    jumping = false;
+    falling = false;
+    playing = false;
+    obstacleBoolean = false;
+    clouds;
+
+    setupCanvas();
+}
+
 //Gameloop
 function gameloop() {
     if(!paused) {
@@ -261,8 +293,17 @@ function gameloop() {
     }
     else {
         ctx.fillStyle = 'white';
-        ctx.font = scoreFontSize + "px Arial";
+        ctx.font = 40 + "px Arial";
         ctx.textAlign = "center";
-        ctx.fillText("Game Over!", ctx.canvas.width / 2, ctx.canvas.width / 2);
+        ctx.fillText("Game Over!", canvasWidth / 2, canvasHeight / 2);
+        ctx.font = 15 + "px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("(Press Space to reload the game)", canvasWidth / 2, canvasHeight / 2 + 30);
+        playing = false;
+    }
+
+    if(gameover) {
+        playing = false;
+
     }
 }
