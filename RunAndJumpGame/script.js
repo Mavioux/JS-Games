@@ -1,9 +1,9 @@
-let canvasWidth = 1366
-let canvasHeight = 768
-let playerWidth = 125
-let playerHeight = 125
-let obstacleWidth = 50
-let obstacleHeight = 50
+let canvasWidth = 1366;
+let canvasHeight = 768;
+let playerWidth = 125;
+let playerHeight = 125;
+let obstacleWidth = 25;
+let obstacleHeight = 25;
 let playerLevelY;
 
 
@@ -128,14 +128,6 @@ function draw() {
     for(let i = 0; i < 3; i++) {
         ctx.fillRect(clouds[i].x, clouds[i].y, clouds[i].width, clouds[i].height);
     }
-
-    //Pause Menu
-    if (paused) {
-        ctx.fillStyle = 'white';
-        ctx.font = 50 + "px Arial";
-        ctx.fillText("Paused", canvasWidth/2, canvasHeight/2);
-        alert('hi');
-    }
     
 }
 
@@ -165,7 +157,7 @@ function update() {
 
     if(!obstacleBoolean) {
         let speed = ctx.canvas.width / canvasWidth * (20 + Math.random() * 10);
-        let y = canvasHeight - (obstacleHeight + Math.random() * 300);
+        let y = canvasHeight - (obstacleHeight + Math.random() * 200);
         let x = ctx.canvas.width / canvasWidth * (Math.random() * 100);
         console.log("Ball Speed " + speed);
         console.log("Ball y " + y);
@@ -239,11 +231,29 @@ function startF(key) {
     }
 }
 
+//Pause Menu
+function pause() {
+    if (paused) {
+        ctx.fillStyle = 'white';
+        ctx.font = 50 + "px Arial";
+        ctx.fillText("Paused", canvasWidth/2, canvasHeight/2);
+    }
+}
+if (paused) {
+    ctx.fillStyle = 'white';
+    ctx.font = 50 + "px Arial";
+    ctx.fillText("Paused", canvasWidth/2, canvasHeight/2);
+    alert('hi');
+}
+
 //Gameloop
 function gameloop() {
     if(!paused) {
         update();
         draw();
+    }
+    else {
+        pause();
     }
 
     if(!gameover) {
