@@ -57,9 +57,12 @@ let playing = false;
 let obstacleBoolean = false;
 let clouds;
 
+let beepSound;
 
 //Call for our function to execute when the page loads
 document.addEventListener('DOMContentLoaded', setupCanvas);
+
+
 
 //Setup
 function setupCanvas() {
@@ -81,6 +84,10 @@ function setupCanvas() {
 
     //Initialize the clouds
     clouds = new Array(new Cloud(0), new Cloud(650), new Cloud(1250));
+
+    //Get the element of the sound
+    beepSound = document.getElementById('beepSound');
+    beepSound.src = "quack.mp3";
 
     //Handle Player Input
     document.addEventListener('keydown', playerJump);
@@ -215,6 +222,7 @@ function playerJump (key) {
     else if(key.keyCode === 32 && falling === false && jumping === false && playing) {
         jumping = true
         paused = false;
+        beepSound.play();
     }
     else if(key.keyCode === 32 && playing && paused) {
         paused = false;
@@ -304,6 +312,8 @@ function gameloop() {
 
     if(gameover) {
         playing = false;
+        backgroundMusic.pause();
+        backgroundMusic.currentTime = 0;
 
     }
 }
