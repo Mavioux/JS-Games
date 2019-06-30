@@ -36,7 +36,7 @@ class Obstacle {
 
 class Cloud {
     constructor (x) {
-        this.width = ctx.canvas.width * 300 / canvasWidth;
+        this.width = ctx.canvas.width * 227 / canvasWidth;
         this.height = ctx.canvas.height * 50 / canvasHeight;
         this.x = ctx.canvas.width + ctx.canvas.width / canvasWidth * x;
         this.y = ctx.canvas.height * 100 / canvasHeight;
@@ -83,7 +83,7 @@ function setupCanvas() {
     player = new Player();
 
     //Initialize the clouds
-    clouds = new Array(new Cloud(0), new Cloud(650), new Cloud(1250));
+    clouds = new Array(new Cloud(0), new Cloud(2 * 227), new Cloud(4 * 227), new Cloud(6 * 227));
 
     //Get the element of the sound
     beepSound = document.getElementById('beepSound');
@@ -132,7 +132,7 @@ function draw() {
 
     //Draw the Clouds
     ctx.fillStyle = 'grey';
-    for(let i = 0; i < 3; i++) {
+    for(let i = 0; i < 4; i++) {
         ctx.fillRect(clouds[i].x, clouds[i].y, clouds[i].width, clouds[i].height);
     }
 
@@ -189,10 +189,10 @@ function update() {
     }
 
     //Update the Clouds
-    for(let i = 0; i < 3; i++) {
+    for(let i = 0; i < 4; i++) {
         clouds[i].x -= clouds[i].speed;
         if(clouds[i].x < -clouds[i].width) {
-            clouds[i] = new Cloud(0);
+            clouds[i] = new Cloud(227);
         }
     }
 
